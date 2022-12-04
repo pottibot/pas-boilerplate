@@ -18,9 +18,18 @@
 
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
-require_once('modules/php/DB.php');
-require_once('modules/php/players.php');
 
+require_once('modules/php/DB.php');
+require_once('modules/php/Game.php');
+
+require_once('modules/php/Entities/Abstracts/Entity.php');
+require_once('modules/php/Entities/Player.php');
+
+require_once('modules/php/Managers/Abstracts/Manager.php');
+require_once('modules/php/Managers/Players.php');
+
+use Entities\Player;
+use Managers\Players;
 
 class pasboilerplate extends Table {
 
@@ -126,7 +135,13 @@ class pasboilerplate extends Table {
 
     function test() {
 
-        self::cdump(Players::get()['player_name']);
+        //$player = new Player(DB::getObject("SELECT * FROM player WHERE player =".Game::getActive()));
+        //self::cdump($player);
+        //self::cdump(Players::getEntityClass());
+        $player = Players::get(Game::getActive());
+        //$player = new Player(DB::getObject("SELECT * FROM player WHERE player_id = ".Game::getActive()));
+
+        self::cdump($player->id);
     }
 
     public function getActive() {
