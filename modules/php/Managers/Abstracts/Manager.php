@@ -24,9 +24,10 @@ abstract class Manager {
         return new static::$entityClass(DB::getObject("SELECT * FROM $table WHERE $primary = $id"));
     }
 
-    public static function getIdBy($field, $value) {
+    public static function getIdBy($attr, $value) {
         $table = static::$entityTable;
         $primary = static::$entityPrimary;
+        $field = static::$entityClass::getAttributes()[$attr];
 
         return DB::getUnique("SELECT $primary FROM $table WHERE $field = $value");
     }

@@ -3,6 +3,7 @@
 namespace Gamename;
 
 use \pasboilerplate;
+use \Gamename\Managers\Players;
 
 class Game {
 

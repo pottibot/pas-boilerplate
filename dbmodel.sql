@@ -8,7 +8,7 @@
 -- -----
 
 ALTER TABLE `player`
-ADD `player_turn_position` TINYINT UNSIGNED NOT NULL,
+ADD `player_turn_position` TINYINT UNSIGNED; 
 
 -- CREATE TABLE IF NOT EXISTS `piece` (
 --   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

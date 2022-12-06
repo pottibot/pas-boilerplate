@@ -42,6 +42,10 @@ class Players extends Manager {
 
         Game::get()->reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
         Game::get()->reloadPlayersBasicInfos();
+
+        foreach ($players as $player_id => $player) {
+            DB::query("UPDATE player SET player_turn_position = player_no");
+        }
     }
 
     public static function getUiData() {
@@ -77,7 +81,9 @@ class Players extends Manager {
     // get player after other player in turn order
     public static function getAfterPlayer($pid) {
         $act = self::get($pid);
-        $nexTurnPos = max(1, ($act->id + 1) % self::count());
+        $n = self::count() + 1;
+        $nexTurnPos = ($act->turn_pos + 1) % $n;
+        if ($nexTurnPos == 0) $nexTurnPos = 1;
 
         return self::getByTurnPos($nexTurnPos);
     }
@@ -90,9 +96,11 @@ class Players extends Manager {
     // get player before other player in turn order
     public static function getBeforePlayer($pid) {
         $act = self::get($pid);
-        $nexTurnPos = max(1, ($act->id - 1) % self::count());
+        $n = self::count() + 1;
+        $prevTurnPos = ($act->turn_pos - 1 + $n) % $n;
+        if ($prevTurnPos == 0) $prevTurnPos = 4;
 
-        return self::getByTurnPos($nexTurnPos);
+        return self::getByTurnPos($prevTurnPos);
     }
 
     // get player before active in turn order

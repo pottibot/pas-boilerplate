@@ -9,7 +9,7 @@ class Player extends Entity {
     protected $table = 'player';
     protected $primary = 'player_id';
 
-    protected $attributes = [
+    protected static $attributes = [
         'id' => 'player_id',
         'name' => 'player_name',
         'color' => 'player_color',
@@ -19,13 +19,12 @@ class Player extends Entity {
         'zombie' => 'playe_zombie'
     ];
 
-    public $id;
-    public $name;
-    public $color;
-    public $turn_pos;
-    public $score;
-    public $scoreAux;
-    public $zombie;
-
+    protected $id;
+    protected $name;
+    protected $color;
+    protected $turn_pos;
+    protected $score;
+    protected $score_aux;
+    protected $zombie;
 
 }

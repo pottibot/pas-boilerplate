@@ -24,6 +24,8 @@ require_once('modules/php/Game.php');
 
 require_once('modules/php/Entities/Abstracts/Entity.php');
 require_once('modules/php/Entities/Player.php');
+// test
+require_once('modules/php/Entities/PlayerX.php');
 
 require_once('modules/php/Managers/Abstracts/Manager.php');
 require_once('modules/php/Managers/Players.php');
@@ -32,6 +34,7 @@ use Gamename\Game;
 use Gamename\DB;
 
 use Gamename\Entities\Player;
+use Gamename\Entities\PlayerX;
 use Gamename\Managers\Players;
 
 class pasboilerplate extends Table {
@@ -64,25 +67,7 @@ class pasboilerplate extends Table {
 
     protected function setupNewGame($players, $options = []) {
 
-        // Set the colors of the players with HTML color code
-        // The default below is red/green/blue/orange/brown
-        // The number of colors defined here must correspond to the maximum number of players allowed for the gams
-        $gameinfos = self::getGameinfos();
-        $default_colors = $gameinfos['player_colors'];
- 
-        // Create players
-        // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
-        $values = array();
-        foreach( $players as $player_id => $player )
-        {
-            $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
-        }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-        self::reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
-        self::reloadPlayersBasicInfos();
+        Players::setupNewGame($players, $options);
         
         /************ Start the game initialization *****/
 
@@ -138,14 +123,20 @@ class pasboilerplate extends Table {
 
     function test() {
 
-        //$player = new Player(DB::getObject("SELECT * FROM player WHERE player =".Game::getActive()));
-        //self::cdump($player);
-        //self::cdump(Players::getEntityClass());
-        $player = Players::get(Game::getActive());
-        $player2 = new Player(DB::getObject("SELECT * FROM player WHERE player_id = ".Game::getActive()));
+        self::cdump(PlayerX::getProperties());
 
-        self::cdump($player);
-        self::cdump($player2);
+        /* $attr = [];
+        foreach (class_parents(PlayerX::class) as $parent) {
+            self::cdump(["checking",$parent]);
+
+            if (is_subclass_of($parent,Entity::class)) {
+                self::cdump(["adding",$parent::getAttributes(true)]);
+                $attr = array_merge($attr,$parent::getAttributes(true));
+                self::cdump(["attributes",$parent::getAttributes(true)]);
+            }
+        }
+
+        self::cdump($attr); */
     }
 
     public function getActive() {

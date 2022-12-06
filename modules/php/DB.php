@@ -24,7 +24,7 @@ class DB extends \APP_DbObject {
         return self::getObjectFromDb($sql);
     }
 
-    public static function getValues($sql,$indexed = false) {
+    public static function getValues($sql,$assoc = false) {
         if ($assoc)
             return self::getCollectionFromDb($sql, true);
         else
