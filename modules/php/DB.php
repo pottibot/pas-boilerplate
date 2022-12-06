@@ -1,6 +1,8 @@
 <?php
 
-class DB extends APP_DbObject {
+namespace Gamename;
+
+class DB extends \APP_DbObject {
 
     //////////////////////////////////////////
     // REMAP AND RENAME FRAMEWORK FUNCTIONS

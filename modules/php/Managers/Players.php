@@ -1,13 +1,16 @@
 <?php
 
-namespace Managers;
+namespace Gamename\Managers;
 
-use Entities\Player;
-use Managers\ABS\Manager;
+use Gamename\Game;
+use Gamename\DB;
+
+use Gamename\Entities\Player;
+use Gamename\Managers\ABS\Manager;
 
 class Players extends Manager {
 
-    protected static $entityClass = "Player";
+    protected static $entityClass = "Gamename\Entities\Player";
     protected static $entityTable = 'player';
     protected static $entityPrimary = 'player_id';
 
@@ -45,26 +48,17 @@ class Players extends Manager {
         // TODO
     }
 
-    // GET PLAYER (SHOULD ALWAYS GET PLAYER OF GamenamePlayer CLASS)
-    /* public static function get($pid) {
-        //return DB::getObject("SELECT * FROM player WHERE player_id = $pid");
-        return new Player(DB::getObject("SELECT * FROM player WHERE player_id = $pid"));
-    } */
-
     /////////////////////////////////////////////////////
     //// GET BY PROPERTY ////////////////////////////////
     
     // turn pos
     public static function getByTurnPos($p) {
-        return DB::getUnique("SELECT player_id FROM player WHERE player_turn_position = $p");
+        return self::getIdBy('turn_pos',$p);
     }
 
     // color
     public static function getByColor($c) {
-        $players = DB::getValues("SELECT player_id FROM player WHERE player_color = '$c'");
-
-        if (count($players) == 1) return $players[0];
-        else return $players;
+        return self::getIdBy('color',$p);
     }
 
     /////////////////////////////////////////////////////
@@ -104,30 +98,6 @@ class Players extends Manager {
     // get player before active in turn order
     public static function getPrev() {
         return self::getBeforePlayer(self::getActive());
-    }
-
-    /////////////////////////////////////////////////////
-    //// GET MULTIPLES //////////////////////////////////
-    
-    public static function getAllIds() {
-        return DB::getValues("SELECT player_id FROM player");
-    }
-    public static function getAll() {
-        $ret = [];
-
-        foreach (self::getAllIds() as $pid) {
-            $ret[] = self::get($pid);
-        }
-
-        return $ret;
-    }
-
-    public static function count() {
-        return count(self::getAllIds());
-    }
-
-    public static function getWhere($attr, $condition = '=', $value) {
-        return DB::getValues("SELECT plauyer_id FROM player WHERE $attr $condition $value");
     }
 
     /////////////////////////////////////////////////////

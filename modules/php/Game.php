@@ -1,5 +1,9 @@
 <?php
 
+namespace Gamename;
+
+use \pasboilerplate;
+
 class Game {
 
     // SETUP

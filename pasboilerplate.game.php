@@ -28,8 +28,11 @@ require_once('modules/php/Entities/Player.php');
 require_once('modules/php/Managers/Abstracts/Manager.php');
 require_once('modules/php/Managers/Players.php');
 
-use Entities\Player;
-use Managers\Players;
+use Gamename\Game;
+use Gamename\DB;
+
+use Gamename\Entities\Player;
+use Gamename\Managers\Players;
 
 class pasboilerplate extends Table {
 
@@ -139,9 +142,10 @@ class pasboilerplate extends Table {
         //self::cdump($player);
         //self::cdump(Players::getEntityClass());
         $player = Players::get(Game::getActive());
-        //$player = new Player(DB::getObject("SELECT * FROM player WHERE player_id = ".Game::getActive()));
+        $player2 = new Player(DB::getObject("SELECT * FROM player WHERE player_id = ".Game::getActive()));
 
-        self::cdump($player->id);
+        self::cdump($player);
+        self::cdump($player2);
     }
 
     public function getActive() {

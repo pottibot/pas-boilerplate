@@ -1,6 +1,8 @@
 <?php
 
-namespace Entities\ABS;
+namespace Gamename\Entities\ABS;
+
+use Gamename\DB;
 
 abstract class Entity extends \APP_DbObject implements \JsonSerializable {
 

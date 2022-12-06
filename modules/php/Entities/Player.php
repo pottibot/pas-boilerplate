@@ -1,8 +1,8 @@
 <?php
 
-namespace Entities;
+namespace Gamename\Entities;
 
-use Entities\ABS\Entity;
+use Gamename\Entities\ABS\Entity;
 
 class Player extends Entity {
 
@@ -15,14 +15,14 @@ class Player extends Entity {
         'color' => 'player_color',
         'turn_pos' => 'player_turn_position',
         'score' => 'player_score',
-        'scoreAux' => 'player_score_aux',
+        'score_aux' => 'player_score_aux',
         'zombie' => 'playe_zombie'
     ];
 
     public $id;
     public $name;
     public $color;
-    public $turnPos;
+    public $turn_pos;
     public $score;
     public $scoreAux;
     public $zombie;
