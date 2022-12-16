@@ -16,8 +16,10 @@ class Player extends Entity {
         'turn_pos' => 'player_turn_position',
         'score' => 'player_score',
         'score_aux' => 'player_score_aux',
-        'zombie' => 'playe_zombie'
+        'zombie' => 'player_zombie'
     ];
+
+    protected static $immutableAttributes = ['id','name','color'];
 
     protected $id;
     protected $name;
@@ -26,5 +28,7 @@ class Player extends Entity {
     protected $score;
     protected $score_aux;
     protected $zombie;
+
+
 
 }

@@ -9,18 +9,13 @@ abstract class Piece extends Entity {
 
     protected static $attributes = [
         'id' => 'piece_id',
-        'type' => 'piece_type',
-        'variant' => 'piece_variant',
-        'location' => 'piece_location',
-        'state' => 'piece_state',
+        'type' => 'piece_type', // color, suit, ...
+        'value' => 'piece_value', // shape, value, ...
+        'location' => 'piece_location', // hand_id,  bag, deck_n, table, ...
+        'position' => 'piece_position', // slot_n, col_n, ...
+        'state' => 'piece_state', // active, used, blocked, ...
+        'data' => 'piece_data', // additional data: token on cards, increasing cost, special effects ...
     ];
 
-    public function __construct($db_obj) {
-
-        foreach ($attributes as &$field) {
-            $field = str_replace('piece',static::$table,$field);
-        } unset($field);
-
-        parent::__construct($db_object);
-    }
+    protected static $immutableAttributes = ['id','type','value'];
 }

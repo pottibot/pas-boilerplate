@@ -20,6 +20,30 @@ class Game {
     }
 
     /////////////////////////////////////////////////////
+    //// UTILITIES, HELPERS AND LOGGING /////////////////
+
+    // -- logging on BGA logger -- //
+    // (realtime logging mixed with BGA requests)
+    public static function logTrace($message) {
+        self::get()->trace(">> TRACE: $message <<");
+    }
+
+    public static function logDump($varName, $var, $asString = true) {
+        if ($asString) $var = json_encode($var);
+        self::get()->dump(">> VAR DUMP $varName: ",$var);
+    }
+
+    // -- logging on js console -- //
+    // (requires notification setup and logs async after server request ends)
+    public static function clog($message) {
+        self::get()->notifyAllPlayers("log",$message,[]); // also log on chat log
+    }
+
+    public static function cdump($dump) {
+        self::get()->notifyAllPlayers("dump","",['dump' => $dump]);
+    }
+
+    /////////////////////////////////////////////////////
     //// ACTIVE, CURRENT AND TURN ORDER /////////////////
 
     public static function getActive() {

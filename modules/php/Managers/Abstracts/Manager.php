@@ -12,7 +12,15 @@ abstract class Manager {
     protected static $entityPrimary = null;
 
     abstract protected static function setupNewGame($players, $options);
-    abstract protected static function getUiData();
+
+    public static function getUiData() {
+        $data = [];
+        foreach (self::getAll() as $entity) {
+            $data[$entity->getPrimaryValue()] = (array) json_decode(json_encode($entity)); // weird little conversion to transform object to array without introducing ugly stuff
+        }
+
+        return $data;
+    }
 
     /////////////////////////////////////////////////////
     //// GET UNIQUE /////////////////////////////////////
@@ -29,7 +37,7 @@ abstract class Manager {
         $primary = static::$entityPrimary;
         $field = static::$entityClass::getAttributes()[$attr];
 
-        return DB::getUnique("SELECT $primary FROM $table WHERE $field = $value");
+        return DB::getUnique("SELECT $primary FROM $table WHERE $field = '$value'");
     }
 
     /////////////////////////////////////////////////////
@@ -46,7 +54,7 @@ abstract class Manager {
         $ret = [];
 
         foreach (self::getAllIds() as $id) {
-            $ret[] = static::get($id);
+            $ret[] = self::get($id);
         }
 
         return $ret;
@@ -56,10 +64,22 @@ abstract class Manager {
         return count(static::getAllIds());
     }
 
-    public static function getMany($field, $condition = '=', $value) {
+    protected static function getField($entityAttr) {
+        return static::$entityClass::getAttributes()[$entityAttr];
+    }
+
+    public static function getMany($attr, $value, $condition = '=') {
         $table = static::$entityTable;
         $primary = static::$entityPrimary;
+        $field = self::getField($attr);
 
-        return new static::$entityClass(DB::getValues("SELECT * FROM $table WHERE $field $condition $value"));
+        $entities = DB::getList("SELECT * FROM $table WHERE $field $condition '$value'");
+
+        $ret = [];
+        foreach ($entities as $row) {
+            $ret[] = new static::$entityClass($row);
+        }
+
+        return $ret;
     }
 }

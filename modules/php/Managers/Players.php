@@ -48,21 +48,17 @@ class Players extends Manager {
         }
     }
 
-    public static function getUiData() {
-        // TODO
-    }
-
     /////////////////////////////////////////////////////
     //// GET BY PROPERTY ////////////////////////////////
     
     // turn pos
     public static function getByTurnPos($p) {
-        return self::getIdBy('turn_pos',$p);
+        return self::get(self::getIdBy('turn_pos',$p));
     }
 
     // color
     public static function getByColor($c) {
-        return self::getIdBy('color',$p);
+        return self::get(self::getIdBy('color',$p));
     }
 
     /////////////////////////////////////////////////////
@@ -70,12 +66,12 @@ class Players extends Manager {
 
     // get active player
     public static function getActive() {
-        return Game::getActive();
+        return self::get(Game::getActive());
     }
 
     // get current player (client sending request)
     public static function getCurrent() {
-        return Game::getCurrent();
+        return self::get(Game::getCurrent());
     }
 
     // get player after other player in turn order

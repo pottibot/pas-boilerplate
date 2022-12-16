@@ -62,6 +62,7 @@ function (dojo, declare) {
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
+            console.log(gamedatas);
             console.log( "Ending game setup" );
         },
        
@@ -224,6 +225,7 @@ function (dojo, declare) {
         {
             console.log( 'notifications subscriptions setup' );
             dojo.subscribe( 'dump', this, "notif_dump" );
+            dojo.subscribe( 'log', this, "notif_log" );
             
             // TODO: here, associate your game notifications with local methods
             
@@ -239,6 +241,10 @@ function (dojo, declare) {
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
+
+        notif_log: function(notif) {
+            console.log(notif.log);;
+        },
         
         notif_dump: function(notif) {
             console.log(notif.args.dump);
