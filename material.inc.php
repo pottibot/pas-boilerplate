@@ -24,6 +24,8 @@
 
 Example:
 
+// TEST //
+
 $this->card_types = array(
     1 => array( "card_name" => ...,
                 ...
