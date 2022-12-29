@@ -1,3 +1,48 @@
-
+#preferences_panel {
+  transition: height 250ms ease-in;
+}
+#preferences_panel #preferences_panel_icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#preferences_panel #preferences_panel_icon #cog_icon {
+  width: 35px;
+  height: 35px;
+  fill: rgb(90, 58, 42);
+}
+#preferences_panel #preferences_panel_icon #menu_arrow {
+  width: 0px;
+  height: 0px;
+  border: solid;
+  border-width: 7px 15px 7px 15px;
+  border-color: transparent transparent transparent rgb(90, 58, 42);
+  transform-origin: 20% 50%;
+  transition: transform 250ms ease-in;
+  transform: rotate(0deg);
+  cursor: pointer;
+}
+#preferences_panel #preferences_panel_icon #menu_arrow:hover {
+  border-color: transparent transparent transparent rgb(174, 116, 87);
+}
+#preferences_panel #preferences_panel_icon #menu_arrow.open {
+  transform: rotate(90deg);
+}
+#preferences_panel #preferences_panel_options {
+  height: 0px;
+  overflow: hidden;
+  transition: height 250ms ease-in;
+}
+#preferences_panel #preferences_panel_options .preferences_panel_selection {
+  padding: 10px;
+  border-bottom: solid 1px rgb(90, 58, 42);
+}
+#preferences_panel #preferences_panel_options .preferences_panel_selection .preference_lable {
+  display: inline-block;
+}
+#preferences_panel #preferences_panel_options .preferences_panel_selection:first-child {
+  margin-top: 5px;
+  border-top: solid 1px rgb(90, 58, 42);
+}
 
 /*# sourceMappingURL=pasboilerplate.css.map */

@@ -124,7 +124,8 @@ class pasboilerplate extends Table {
     #region
 
     function test() {
-        Game::cdump(Players::getUiData());
+        Game::clog("HELLO");
+        Game::cdump("HELLO");
     }
 
     #endregion

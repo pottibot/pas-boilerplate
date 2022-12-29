@@ -1,0 +1,61 @@
+
+
+#preferences_panel {
+    $main_col: rgb(90, 58, 42);
+    $highlight_col: rgb(174, 116, 87);
+    
+    transition: height 250ms ease-in;
+
+    #preferences_panel_icon {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        #cog_icon {
+            width: 35px;
+            height: 35px;
+            fill: $main_col;
+        }
+
+        #menu_arrow {
+            width: 0px;
+            height: 0px;
+            border: solid;
+            border-width: 7px 15px 7px 15px;
+            border-color: transparent transparent transparent $main_col;
+            transform-origin: 20% 50%;
+            transition: transform 250ms ease-in;
+            transform: rotate(0deg);
+        
+            cursor: pointer;
+
+            &:hover {
+                border-color: transparent transparent transparent $highlight_col;
+            }
+
+            &.open {
+                transform: rotate(90deg);
+            }
+        }
+    }
+
+    #preferences_panel_options {
+        height: 0px;
+        overflow: hidden;
+        transition: height 250ms ease-in;
+
+        .preferences_panel_selection {
+            padding: 10px;
+            border-bottom: solid 1px $main_col;
+
+            .preference_lable{
+                display: inline-block;
+            }
+
+            &:first-child {
+                margin-top: 5px;
+                border-top: solid 1px $main_col;
+            }
+        }
+    }
+}

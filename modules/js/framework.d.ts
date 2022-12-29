@@ -1,6 +1,6 @@
-/**
- * Framework interfaces
- */
+//////////////////////////////////
+/// -- FRAMEWORK DEFINITION -- ///
+//////////////////////////////////
 
  interface Game {
     setup: (gamedatas: any) => void;
@@ -21,22 +21,9 @@ interface Notif<T> {
     uid: string;
 }
 
-/* TODO repace Function by (..params) => void */
+// declare only subscribe method. only method used from dojo framework (and currently necessary to listen to server notification)
 interface Dojo {
-    place: Function;
-    style: Function;
-    hitch: Function;
-    addClass: (nodeId: string, className: string) => {};
-    removeClass: (nodeId: string, className?: string) => {};
-    toggleClass: (nodeId: string, className: string, forceValue: boolean) => {};
-    connect: Function;
-    query: Function;
-    subscribe: Function;
-    string: any;
-    fx: any;
-    marginBox: Function;
-    fadeIn: Function;
-    trim: Function;
+    subscribe: (notifIdentifier: string, gameInstance: Game, handlerIdentifier: string) => void;
 }
 
 type Gamestate = any; // TODO

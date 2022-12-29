@@ -1,3 +1,7 @@
+/////////////////////////
+/// -- DOJO DEFINE -- ///
+/////////////////////////
+
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
@@ -5,5 +9,5 @@ define([
     "ebg/stock"
 ],
 function (dojo, declare) {
-    return declare("bgagame.yourgamename", ebg.core.gamegui, new Pasboilerplate());             
+    return declare("bgagame.pasboilerplate", ebg.core.gamegui, new Pasboilerplate());             
 });

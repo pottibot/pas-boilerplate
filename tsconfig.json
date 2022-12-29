@@ -1,17 +1,16 @@
 {
     "rootDir": ".", 
     "compilerOptions": {
-      "target": "es6",
+      "target": "es5",
       "module": "none",
       "lib": ["dom", "esnext"],  
       "sourceMap": false,
-      "typeRoots": ["src/types", "./types", "./node_modules/@types"],
       "outFile": "pasboilerplate.js",
     },
     "files": [
         "modules/js/framework.d.ts",
         "modules/js/define.ts",
         "modules/js/pasboilerplate.d.ts",
-        "modules/js/pasboilerplate.ts",
+        "pasboilerplate.ts",
     ]
 }
