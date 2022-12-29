@@ -7,5 +7,6 @@ const OPTION_1 = 100;
 
 // PREFERENCES
 const PREF_1 = 100;
+const PREF_2 = 101;
 
 // STATISTICS

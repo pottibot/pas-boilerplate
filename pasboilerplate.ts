@@ -46,7 +46,7 @@ class Pasboilerplate implements Game {
         }
         
         // TODO: Set up your game interface here, according to "gamedatas"
-        
+
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
         this.setupPreferencePanel();
@@ -138,19 +138,24 @@ class Pasboilerplate implements Game {
 
     private setupPreferencePanel() {
 
-        let settings_panel = $('preferences_panel');
-        let menu_arrow = $('menu_arrow');
-        let settings_options = $('preferences_panel_options');
-        menu_arrow.addEventListener('click', evt => {
+        let settings_panel : HTMLElement = $('preferences_panel');
+        let menu_arrow : HTMLElement = $('menu_arrow');
+        let settings_options : HTMLElement = $('preferences_panel_options');
 
-            console.log('Opening preference panel');
-
+        menu_arrow.onclick = () => {
             settings_panel.style.height = 'auto';
+
             if (menu_arrow.classList.contains('open')) {
+                //debug
+                console.log('Closing preference panel');
+
                 menu_arrow.classList.remove('open');
                 settings_options.style.height = '0px';
                 
             } else {
+                //debug
+                console.log('Opening preference panel');
+
                 menu_arrow.classList.add('open');
                 settings_options.style.height = 'fit-content';
                 let h = settings_options.offsetHeight;
@@ -158,7 +163,21 @@ class Pasboilerplate implements Game {
                 settings_options.offsetHeight;
                 settings_options.style.height = h+'px';
             }
-        })
+        };
+
+        console.log((this as any).prefs);
+
+        for (const prefId in (this as any).prefs) {
+
+            let pref : Preference = (this as any).prefs[prefId];
+            console.log(pref);
+
+            if (pref.values.length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+
+            } else { // preference is selection
+
+            }
+        }
     }
 
     //#endregion

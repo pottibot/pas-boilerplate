@@ -18,16 +18,13 @@
         <div id="menu_arrow"></div>
     </div>
     <div id="preferences_panel_options">
-        <div id="pref_100" class="preferences_panel_selection">
+        
+        <div id="pref_100" class="preference_option preference_selection">
             <div class='preference_lable'>{PREF_100_TEXT}:</div>
             <select id="preference_selection_100">
             </select>
-        </div>
-        <div id="pref_101" class="preferences_panel_selection">
-            <div class='preference_lable'>{PREF_101_TEXT}:</div>
-            <select id="preference_selection_101">
-            </select>
-        </div>
+        </div> 
+       
     </div>
 </div>
 
@@ -36,13 +33,27 @@ This is your game interface. You can edit this HTML in your ".tpl" file.
 
 <script type="text/javascript">
 
-// Javascript HTML templates
+var selection_pref =    `<div id="\${id}" class="preference_option selection_preference">
+                            <div class='preference_lable'>\${lable}:</div>
+                            <select id="selection_preference_\${id}">
+                                \${options}
+                            </select>
+                        </div> `;
 
-/*
-// Example:
-var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_ID}"></div>';
+var selection_pref_option = `<option value="\${id}">\${name}</option>`;
 
-*/
+var toggle_pref =   `<div id="\${id}" class="preference_option preference_toggle">
+                        <div class='preference_lable'>\${lable}:</div>
+                        <label class="toggle_switch">
+                            <input id="toggle_preference_\${id}" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div> `;
+
+var range_pref =    `<div id="\${id}" class="preference_option selection_preference">
+                        <div class='preference_lable'>\${lable}:</div>
+                        <input type="range" id="range_preference_\${}" min="\${min}" max="\${max}" value="\${value}">
+                    </div> `;
 
 </script>  
 

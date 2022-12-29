@@ -114,14 +114,17 @@ var Pasboilerplate = /** @class */ (function () {
         var settings_panel = $('preferences_panel');
         var menu_arrow = $('menu_arrow');
         var settings_options = $('preferences_panel_options');
-        menu_arrow.addEventListener('click', function (evt) {
-            console.log('Opening preference panel');
+        menu_arrow.onclick = function () {
             settings_panel.style.height = 'auto';
             if (menu_arrow.classList.contains('open')) {
+                //debug
+                console.log('Closing preference panel');
                 menu_arrow.classList.remove('open');
                 settings_options.style.height = '0px';
             }
             else {
+                //debug
+                console.log('Opening preference panel');
                 menu_arrow.classList.add('open');
                 settings_options.style.height = 'fit-content';
                 var h = settings_options.offsetHeight;
@@ -129,7 +132,16 @@ var Pasboilerplate = /** @class */ (function () {
                 settings_options.offsetHeight;
                 settings_options.style.height = h + 'px';
             }
-        });
+        };
+        console.log(this.prefs);
+        for (var prefId in this.prefs) {
+            var pref = this.prefs[prefId];
+            console.log(pref);
+            if (pref.values.length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+            }
+            else { // preference is selection
+            }
+        }
     };
     //#endregion
     /////////////////////////

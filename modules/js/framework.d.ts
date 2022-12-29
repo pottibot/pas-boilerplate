@@ -21,6 +21,18 @@ interface Notif<T> {
     uid: string;
 }
 
+interface PreferenceValue {
+    name: string;
+}
+
+interface Preference {
+    generic?: boolean;
+    name: string;
+    values: PreferenceValue[];
+    value: number;
+    default: number;
+}
+
 // declare only subscribe method. only method used from dojo framework (and currently necessary to listen to server notification)
 interface Dojo {
     subscribe: (notifIdentifier: string, gameInstance: Game, handlerIdentifier: string) => void;
