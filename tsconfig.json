@@ -6,11 +6,10 @@
       "lib": ["dom", "esnext"],  
       "sourceMap": false,
       "outFile": "pasboilerplate.js",
+      "typeRoots": ["modules/js/types", "./types", "./node_modules/@types"]
     },
-    "files": [
-        "modules/js/framework.d.ts",
-        "modules/js/define.ts",
-        "modules/js/pasboilerplate.d.ts",
+    "include": [
+        "modules/js/**/*.ts",
         "pasboilerplate.ts",
     ]
 }

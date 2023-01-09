@@ -8,17 +8,21 @@
  * ----- *
  */
 
-declare const define;
-declare const ebg;
-declare const $;
-declare const dojo: Dojo;
+ // @ts-ignore
+GameGui = /** @class */ (function () {
+    function GameGui() {}
+    return GameGui;
+})();
 
-class Pasboilerplate implements Game {
+// format HTML string into element and append it as last child of parentEl. returns the formatted element itself
+function placeLast(HTMLstring: string, parentEl: HTMLElement) {
 
-    private gamedatas: pasboilerplateGamedatas;
-    private player_id: string;
-    private players: { [playerId: number]: Player };
-    private playerNumber: number;
+    parentEl.insertAdjacentHTML('beforeend',HTMLstring);
+
+    return parentEl.lastElementChild as HTMLElement;
+}
+
+class Pasboilerplate extends GameGui {
 
     // GLOBALS DEF
     //private myGlobalValue: any;
@@ -29,6 +33,8 @@ class Pasboilerplate implements Game {
     //#region
 
     constructor() {
+        super();
+
         console.log('pasboilerplate constructed!');
             
         // GLOBALS INIT
@@ -49,7 +55,9 @@ class Pasboilerplate implements Game {
 
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
+
         this.setupPreferencePanel();
+        this.initPreferenceObserver();
 
         console.log( "Ending game setup" );
     }
@@ -67,7 +75,7 @@ class Pasboilerplate implements Game {
 
     /* @Override */
     public updatePlayerOrdering() {
-        (this as any).inherited(arguments);
+        this.inherited(arguments);
 
         console.log("Updating Player ordering");
         
@@ -83,7 +91,7 @@ class Pasboilerplate implements Game {
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);
         }
-        return (this as any).inherited(arguments);
+        return this.inherited(arguments);
     }
 
     private initPreferenceObserver() {
@@ -96,14 +104,21 @@ class Pasboilerplate implements Game {
                     return;
                 }
                 const pref = match[1];
-                const newValue = prefControl.target.value;
-                (this as any).prefs[pref].value = newValue;
+                let newValue;
+
+                if (typeof evt.target.checked !== 'undefined') {
+                    newValue = evt.target.checked? '1':'2';
+                } else {
+                    newValue = evt.target.value;
+                }
+                
+                this.prefs[pref].value = newValue;
                 this.onPreferenceChange(pref, newValue);
             }
         });
 
         // FIRE EVENTS TO TRIGGER CHANGES A FIRST TIME
-        document.querySelectorAll("#ingame_menu_content .preference_control").forEach((el: any) => {
+        document.querySelectorAll("#ingame_menu_content .preference_control").forEach((el: HTMLElement) => {
             // Create a new 'change' event
             let event = new CustomEvent('change');
 
@@ -112,11 +127,19 @@ class Pasboilerplate implements Game {
         });
     }
 
-    private onPreferenceChange(prefId: number, prefValue: number) {
-        //console.log("Preference changed", prefId, prefValue);
+    private onPreferenceChange(prefId: string, prefValue: string) {
+        if (parseInt(prefId) >= 200 || parseInt(prefId) < 100) return;
 
-        let prefSelect = $('pref_select_'+prefId)
-        if (prefSelect) prefSelect.value = prefValue;
+        console.log("Preference changed", prefId, prefValue);
+
+        let prefEl = $(`preference_option_${prefId}`);
+        let prefInput: any = document.querySelector(`#preference_option_${prefId} .preference_input`);
+
+        if (prefEl.classList.contains('preference_toggle')) {
+            prefInput.checked = prefValue == '1';
+        } else {
+            prefInput.value = prefValue;
+        }
         
         switch (prefId) {        
             default:
@@ -124,8 +147,8 @@ class Pasboilerplate implements Game {
         }
     }
 
-    private updatePreference(prefId: number, newValue: number) {
-        //console.log("Updating preference", prefId, newValue);
+    private updatePreference(prefId: string, newValue: string) {
+        console.log("Updating preference", prefId, newValue);
 
         // Select preference value in control:
         document.querySelectorAll('#preference_control_' + prefId + ' > option[value="' + newValue + '"], #preference_fontrol_' + prefId + ' > option[value="' + newValue + '"]')
@@ -138,6 +161,7 @@ class Pasboilerplate implements Game {
 
     private setupPreferencePanel() {
 
+        // set handler for preference menu arrow
         let settings_panel : HTMLElement = $('preferences_panel');
         let menu_arrow : HTMLElement = $('menu_arrow');
         let settings_options : HTMLElement = $('preferences_panel_options');
@@ -165,18 +189,51 @@ class Pasboilerplate implements Game {
             }
         };
 
-        console.log((this as any).prefs);
+        console.log("Setup preference panel");
+        console.log("User preferences: ",this.prefs);
 
-        for (const prefId in (this as any).prefs) {
+        // parse user preference from server, add options to menu and attach onchange handler
+        for (const prefId in this.prefs) {
 
-            let pref : Preference = (this as any).prefs[prefId];
-            console.log(pref);
+            let pref = this.prefs[prefId];
 
-            if (pref.values.length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+            if (parseInt(prefId) >= 200 || parseInt(prefId) < 100) continue;
 
+            if (Object.values(pref.values).length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+
+                placeLast(this.format_block('toggle_pref',{
+                    id: prefId,
+                    lable: _(pref.name)
+                }), $('preferences_panel_options'));
+                
             } else { // preference is selection
-
+                let options = '';
+                
+                for (const prefOpt in pref.values) {
+                    options += this.format_block('selection_pref_option',{
+                        id: prefOpt,
+                        name: _(pref.values[prefOpt].name)
+                    });
+                }
+                
+                placeLast(this.format_block('selection_pref',{
+                    id: prefId,
+                    lable: _(pref.name),
+                    options: options
+                }), $('preferences_panel_options'));
             }
+            
+            let prefInput: any = document.querySelector(`#preference_option_${prefId} .preference_input`);
+            console.log(prefInput);
+            
+            prefInput.onchange = () => {
+
+                if (Object.values(pref.values).length == 2) {
+                    this.updatePreference(prefId,prefInput.checked? '1':'2');
+                } else {
+                    this.updatePreference(prefId,prefInput.value);
+                }
+            };
         }
     }
 
@@ -210,7 +267,7 @@ class Pasboilerplate implements Game {
     public onUpdateActionButtons(stateName: string, args: any) {
         console.log( 'onUpdateActionButtons: '+stateName );
                     
-        if ((this as any).isCurrentPlayerActive()) {            
+        if (this.isCurrentPlayerActive()) {            
             switch(stateName) {
             }
         }
@@ -259,13 +316,13 @@ class Pasboilerplate implements Game {
         dojo.subscribe('log', this, "notif_log");
     }
 
-    notif_log(notif: Notif<any>) {
+    notif_log(notif: Notif) {
         console.log('LOGGING!');
         
         console.log(notif.log);
     }
 
-    notif_dump(notif: Notif<any>) {
+    notif_dump(notif: Notif) {
         console.log('DUMPING!');
 
         console.log(notif.args.dump);

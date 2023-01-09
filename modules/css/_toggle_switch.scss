@@ -1,67 +1,63 @@
-/* TOGGLE SWITCH BASED ON INPUT CHECKBOX - copied from W3Schools tutorial */
+/* TOGGLE SWITCH BASED ON INPUT CHECKBOX - inspired by W3Schools tutorial */
 
 /* The switch - the box around the slider */
 .toggle_switch {
-    $on_col: #2196F3;
+    $on_col: #4871b6;
     $off_col: #ccc;
     $switch_col: #ffffff;
+    $w: 40px;
+    $h: 22px;
+    $inside_margin: 2px;
+    $anim_speed: 400ms;
     
-    position: relative;
+    position: absolute;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: $w;
+    height: $h;
+    margin-left: 5px;
 
     /* Hide default HTML checkbox */
     input {
-        opacity: 0;
-        width: 0;
-        height: 0;
+        visibility: hidden;
     }
 
     /* The slider */
     .slider {
         position: absolute;
-        cursor: pointer;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: $off_col;
-        -webkit-transition: .4s;
-        transition: .4s;
-
-        &.round {
-            border-radius: 34px;
+        border-radius: $h;
         
-            &:before {
-                border-radius: 50%;
-            }
-        }
+        cursor: pointer;
+        background-color: $off_col;
+        transition: $anim_speed;
+        
 
         &:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: #ffffff;
-            -webkit-transition: .4s;
-            transition: .4s;
+            height: $h - $inside_margin*2;
+            width: $h - $inside_margin*2;
+            border-radius: 50%;
+
+            left: $inside_margin;
+            bottom: $inside_margin;
+            background-color: $switch_col;
+            transition: $anim_speed;
         }
     }
 
     input:checked + .slider {
-    background-color: $on_col;
+        background-color: $on_col;
+
+        &:before {
+            transform: translateX($h - $inside_margin*2);
+        }
     }
 
     input:focus + .slider {
         box-shadow: 0 0 1px $on_col;
-
-        &:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
     }
 }

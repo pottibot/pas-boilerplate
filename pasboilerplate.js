@@ -18,7 +18,33 @@ define([
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * ----- *
  */
-var Pasboilerplate = /** @class */ (function () {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+// @ts-ignore
+GameGui = /** @class */ (function () {
+    function GameGui() { }
+    return GameGui;
+})();
+// format HTML string into element and append it as last child of parentEl. returns the formatted element itself
+function placeLast(HTMLstring, parentEl) {
+    parentEl.insertAdjacentHTML('beforeend', HTMLstring);
+    return parentEl.lastElementChild;
+}
+var Pasboilerplate = /** @class */ (function (_super) {
+    __extends(Pasboilerplate, _super);
     // GLOBALS DEF
     //private myGlobalValue: any;
     ///////////////////
@@ -26,7 +52,9 @@ var Pasboilerplate = /** @class */ (function () {
     ///////////////////
     //#region
     function Pasboilerplate() {
+        var _this = _super.call(this) || this;
         console.log('pasboilerplate constructed!');
+        return _this;
         // GLOBALS INIT
         //this.myGlobalValue= 0;
     }
@@ -41,6 +69,7 @@ var Pasboilerplate = /** @class */ (function () {
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
         this.setupPreferencePanel();
+        this.initPreferenceObserver();
         console.log("Ending game setup");
     };
     //#endregion
@@ -78,7 +107,13 @@ var Pasboilerplate = /** @class */ (function () {
                     return;
                 }
                 var pref = match[1];
-                var newValue = prefControl.target.value;
+                var newValue;
+                if (typeof evt.target.checked !== 'undefined') {
+                    newValue = evt.target.checked ? '1' : '2';
+                }
+                else {
+                    newValue = evt.target.value;
+                }
                 _this.prefs[pref].value = newValue;
                 _this.onPreferenceChange(pref, newValue);
             };
@@ -92,17 +127,24 @@ var Pasboilerplate = /** @class */ (function () {
         });
     };
     Pasboilerplate.prototype.onPreferenceChange = function (prefId, prefValue) {
-        //console.log("Preference changed", prefId, prefValue);
-        var prefSelect = $('pref_select_' + prefId);
-        if (prefSelect)
-            prefSelect.value = prefValue;
+        if (parseInt(prefId) >= 200 || parseInt(prefId) < 100)
+            return;
+        console.log("Preference changed", prefId, prefValue);
+        var prefEl = $("preference_option_".concat(prefId));
+        var prefInput = document.querySelector("#preference_option_".concat(prefId, " .preference_input"));
+        if (prefEl.classList.contains('preference_toggle')) {
+            prefInput.checked = prefValue == '1';
+        }
+        else {
+            prefInput.value = prefValue;
+        }
         switch (prefId) {
             default:
                 break;
         }
     };
     Pasboilerplate.prototype.updatePreference = function (prefId, newValue) {
-        //console.log("Updating preference", prefId, newValue);
+        console.log("Updating preference", prefId, newValue);
         // Select preference value in control:
         document.querySelectorAll('#preference_control_' + prefId + ' > option[value="' + newValue + '"], #preference_fontrol_' + prefId + ' > option[value="' + newValue + '"]')
             .forEach(function (el) { return el.selected = true; });
@@ -111,6 +153,8 @@ var Pasboilerplate = /** @class */ (function () {
         $('preference_control_' + prefId).dispatchEvent(newEvt);
     };
     Pasboilerplate.prototype.setupPreferencePanel = function () {
+        var _this = this;
+        // set handler for preference menu arrow
         var settings_panel = $('preferences_panel');
         var menu_arrow = $('menu_arrow');
         var settings_options = $('preferences_panel_options');
@@ -133,14 +177,47 @@ var Pasboilerplate = /** @class */ (function () {
                 settings_options.style.height = h + 'px';
             }
         };
-        console.log(this.prefs);
-        for (var prefId in this.prefs) {
-            var pref = this.prefs[prefId];
-            console.log(pref);
-            if (pref.values.length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+        console.log("Setup preference panel");
+        console.log("User preferences: ", this.prefs);
+        var _loop_1 = function (prefId) {
+            var pref = this_1.prefs[prefId];
+            if (parseInt(prefId) >= 200 || parseInt(prefId) < 100)
+                return "continue";
+            if (Object.values(pref.values).length == 2) { // preference is toggle (could be improved, not all binary options are on/off
+                placeLast(this_1.format_block('toggle_pref', {
+                    id: prefId,
+                    lable: _(pref.name)
+                }), $('preferences_panel_options'));
             }
             else { // preference is selection
+                var options = '';
+                for (var prefOpt in pref.values) {
+                    options += this_1.format_block('selection_pref_option', {
+                        id: prefOpt,
+                        name: _(pref.values[prefOpt].name)
+                    });
+                }
+                placeLast(this_1.format_block('selection_pref', {
+                    id: prefId,
+                    lable: _(pref.name),
+                    options: options
+                }), $('preferences_panel_options'));
             }
+            var prefInput = document.querySelector("#preference_option_".concat(prefId, " .preference_input"));
+            console.log(prefInput);
+            prefInput.onchange = function () {
+                if (Object.values(pref.values).length == 2) {
+                    _this.updatePreference(prefId, prefInput.checked ? '1' : '2');
+                }
+                else {
+                    _this.updatePreference(prefId, prefInput.value);
+                }
+            };
+        };
+        var this_1 = this;
+        // parse user preference from server, add options to menu and attach onchange handler
+        for (var prefId in this.prefs) {
+            _loop_1(prefId);
         }
     };
     //#endregion
@@ -206,4 +283,4 @@ var Pasboilerplate = /** @class */ (function () {
         console.log(notif.args.dump);
     };
     return Pasboilerplate;
-}());
+}(GameGui));
