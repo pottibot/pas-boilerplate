@@ -10,6 +10,7 @@
 -------
 -->
 
+<!-- PREFERENCE PANEL -->
 <div class="player-board" id="preferences_panel">
     <div id="preferences_panel_icon">
         <svg id="cog_icon" xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
@@ -20,10 +21,21 @@
     <div id="preferences_panel_options">       
     </div>
 </div>
+<!-- /// -->
 
-This is your game interface. You can edit this HTML in your ".tpl" file.
+<!-- GAME AREA -->
+
+<div id="test_playground">
+    <div id="b" class="testcont">
+        <div id="a" class="testobj"></div>
+    </div>
+    <div id="c" class="testcont"></div>
+</div>
+
+<!-- /// -->
 
 
+<!-- TEMPLATES FOR JS -->
 <script type="text/javascript">
 
 var selection_pref =    `<div id="preference_option_\${id}" class="preference_option selection_preference">
@@ -47,7 +59,7 @@ var range_pref =    `<div id="preference_option_\${id}" class="preference_option
                         <div class='preference_lable'>\${lable}:</div>
                         <input type="range" class="preference_input" min="\${min}" max="\${max}" value="\${value}">
                     </div> `;
-
 </script>  
+<!-- /// -->
 
 {OVERALL_GAME_FOOTER}
