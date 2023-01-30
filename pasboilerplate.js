@@ -235,6 +235,20 @@ var Pasboilerplate = /** @class */ (function (_super) {
     /// -- MISC UTILITY -- ///
     //////////////////////////
     //#region
+    Pasboilerplate.prototype.takeAction = function (action, data) {
+        if (!gameui.checkAction(action))
+            return;
+        data = data || {};
+        data.lock = true;
+        return new Promise(function (resolve, reject) {
+            gameui.ajaxcall("/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html", data, //
+            gameui, function (data) { return resolve(data); }, function (isError) {
+                if (isError)
+                    reject(data);
+            });
+        });
+    };
+    // -- BGA framework overrides -- //
     /* @Override */
     Pasboilerplate.prototype.onScreenWidthChange = function () {
     };
@@ -255,6 +269,7 @@ var Pasboilerplate = /** @class */ (function (_super) {
         }
         return this.inherited(arguments);
     };
+    // -- preferences handling -- //
     Pasboilerplate.prototype.initPreferenceObserver = function () {
         var _this = this;
         // DEFINE LISTENER FOR PREFERENCES CHANGES
@@ -378,19 +393,12 @@ var Pasboilerplate = /** @class */ (function (_super) {
             _loop_1(prefId);
         }
     };
-    Pasboilerplate.prototype.takeAction = function (action, data) {
-        if (!gameui.checkAction(action))
-            return;
-        data = data || {};
-        data.lock = true;
-        return new Promise(function (resolve, reject) {
-            gameui.ajaxcall("/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html", data, //
-            gameui, function (data) { return resolve(data); }, function (isError) {
-                if (isError)
-                    reject(data);
-            });
-        });
-    };
+    // -- element positioning and animations -- //
+    /**
+     * Custom made positional placing function as alternative to framework method placeOnObject.
+     *
+     * Added optional placing surface, all-in-one optional pixel relative positioning, optional positioning origin (center / top-left standard), made positioning scale invariant.
+     */
     Pasboilerplate.prototype.placeOnElement = function (element, target, surface, position, center) {
         if (center === void 0) { center = true; }
         surface = surface || $(this.defaultSlidingSurface);
@@ -420,6 +428,11 @@ var Pasboilerplate = /** @class */ (function (_super) {
             top: (targetPos.y - surfacePos.y + centeringOffset.y + position.y) + 'px',
         });
     };
+    /**
+     * Custom made simple slide animation function as alternative to framework method slideOnObject.
+     *
+     * Uses placeOnElement method, thus includes all it's features, plus adaptive scaling for target containers that have a different scale value than origin.
+    */
     Pasboilerplate.prototype.slideOnElement = function (element, target, duration, delay, surface, position, toScale, center) {
         if (delay === void 0) { delay = 0; }
         if (toScale === void 0) { toScale = 1; }
@@ -444,6 +457,23 @@ var Pasboilerplate = /** @class */ (function (_super) {
             }, duration + delay);
         });
     };
+    /**
+     * Custom made configuranble animation function that adds upon the features of the simpler slideOnElement method.
+     *
+     * Options: (see SlideAnimationConfig interface for properties types)
+     * - duration
+     * - delay
+     * - pos
+     * - append
+     * - beforeSibling
+     * - phantomIn
+     * - phantomOut
+     * - slideSurface
+     * - className
+     * - adaptScale
+     *
+     * Notes: phantoms are used to gradually take/free up the space occupied by the element in the container, appends element by default in the end
+     */
     Pasboilerplate.prototype.slideElementAnim = function (element, target, options) {
         var _this = this;
         var config = Object.assign(this.defaultSlideAnimation, options);
@@ -456,7 +486,8 @@ var Pasboilerplate = /** @class */ (function (_super) {
             case 'parent':
                 surface = element.parentElement;
                 break;
-            case 'common_ancestor': // TODO
+            case 'common_ancestor':
+                surface = getCommonAncestor(element, target);
                 break;
             default:
                 surface = $(config.slideSurface);
@@ -610,17 +641,17 @@ var Pasboilerplate = /** @class */ (function (_super) {
     ///////////////////////////
     // #region
     Pasboilerplate.prototype.setupNotifications = function () {
+        var _this = this;
         console.log('notifications subscriptions setup');
-        // TODO: here, associate your game notifications with local methods
-        // Example 1: standard notification handling
-        //dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-        // Example 2: standard notification handling + tell the user interface to wait
-        //            during 3 seconds after calling the method in order to let the players
-        //            see what is happening in the game.
-        // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-        // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
-        dojo.subscribe('dump', this, "notif_dump");
-        dojo.subscribe('log', this, "notif_log");
+        var notifs = [
+            ['log', 0],
+            ['dump', 0],
+        ];
+        notifs.forEach(function (notif) {
+            dojo.subscribe(notif[0], _this, "notif_".concat(notif[0]));
+            if (notif[1] > 0)
+                _this.notifqueue.setSynchronous(notif[0], notif[1]);
+        });
     };
     Pasboilerplate.prototype.notif_log = function (notif) {
         console.log('LOGGING!');

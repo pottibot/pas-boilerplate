@@ -173,6 +173,11 @@ interface SlideAnimationConfig {
 	adaptScale: boolean
 }
 
+interface TimedConfirmConfiguration {
+	selectedElement: HTMLElement,
+	selectedClass: string
+}
+
 
 /* 
 // add if necessary
@@ -186,7 +191,7 @@ interface Vec3 {
 // WIP
 type Gamestate = any; // TODO
 
-interface Player {
+interface PlayerData {
     beginner: boolean;
     color: string;
     color_back: any | null;

@@ -38,9 +38,9 @@ class Pasboilerplate extends GameGui {
     private defaultSlidingSurface = 'game_play_area';
     private animationsSpeed = 1;
 
-    ///////////////////
+    private timedConfirmInterval: number;
+
     /// -- SETUP -- ///
-    ///////////////////
     //#region
 
     constructor() {
@@ -74,10 +74,80 @@ class Pasboilerplate extends GameGui {
     
     //#endregion
 
-    //////////////////////////
     /// -- MISC UTILITY -- ///
-    //////////////////////////
     //#region
+
+    private takeAction(action: string, data?: any, confirm: boolean = true, confirmConfig?: TimedConfirmConfiguration) {
+        if (!gameui.checkAction(action)) return;
+
+        if (confirm) {
+
+            let secs;
+            switch (this.prefs[100].value) {
+                case 1: secs = 0; break; // none
+                case 2: secs = 5; break; // timed
+                case 3: secs = 300; break; // active (infinite time -> 5 minutes)
+            }
+
+            document.querySelectorAll(`.${confirmConfig.selectedClass}`).forEach(el => {
+                el.classList.remove(confirmConfig.selectedClass);
+            });
+
+            if (secs == 0) {
+                this.takeAction(action,data,false);
+            }
+
+            confirmConfig.selectedElement.classList.add(confirmConfig.selectedClass);
+
+            if ($('timedConfirm_button')) $('timedConfirm_button').remove();
+            if ($('reset_button')) $('reset_button').remove();
+            clearInterval(this.timedConfirmInterval);
+
+            this.addActionButton('timedConfirm_button',_('Confirm') + ((secs<=10)? ` (${secs})` : ''), evt => {
+                clearInterval(this.timedConfirmInterval);
+                confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+            });
+            this.addActionButton('reset_button',_('Reset'),evt => {
+                confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+                clearInterval(this.timedConfirmInterval);
+
+                $('timedConfirm_button').remove();
+                $('reset_button').remove();
+
+            }, null, false, 'gray');
+
+            this.timedConfirmInterval = setInterval(() => {
+                secs--;
+                $('timedConfirm_button').innerHTML = `${_('Confirm')}` + ((secs<=10)? ` (${secs})` : '');
+
+                if (secs == 0) {
+                    clearInterval(this.timedConfirmInterval);
+                    confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+
+                    this.takeAction(action,data,false);
+                }
+            }, 1000);
+
+        } else {
+
+            data = data || {};
+            data.lock = true;
+
+            return new Promise((resolve, reject) => {
+                gameui.ajaxcall(
+                    "/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html",
+                    data, //
+                    gameui,
+                    (data) => resolve(data),
+                    (isError) => {
+                        if (isError) reject(data);
+                    }
+                );
+            });
+        }
+    }
+
+    // -- BGA framework overrides -- //
 
     /* @Override */
     public onScreenWidthChange() {
@@ -103,6 +173,8 @@ class Pasboilerplate extends GameGui {
         }
         return this.inherited(arguments);
     }
+
+    // -- preferences handling -- //
 
     private initPreferenceObserver() {
 
@@ -247,25 +319,13 @@ class Pasboilerplate extends GameGui {
         }
     }
 
-    private takeAction(action: string, data?: any) {
-        if (!gameui.checkAction(action)) return;
+    // -- element positioning and animations -- //
 
-        data = data || {};
-        data.lock = true;
-
-        return new Promise((resolve, reject) => {
-            gameui.ajaxcall(
-                "/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html",
-                data, //
-                gameui,
-                (data) => resolve(data),
-                (isError) => {
-                    if (isError) reject(data);
-                }
-            );
-        });
-    }
-
+    /**
+     * Custom made positional placing function as alternative to framework method placeOnObject.
+     * 
+     * Added optional placing surface, all-in-one optional pixel relative positioning, optional positioning origin (center / top-left standard), made positioning scale invariant.
+     */
     public placeOnElement(element: HTMLElement, target: HTMLElement, surface?: HTMLElement, position?: Vec2, center: boolean = true) {
         
         surface = surface || $(this.defaultSlidingSurface);
@@ -304,6 +364,11 @@ class Pasboilerplate extends GameGui {
         });
     }
     
+    /**
+     * Custom made simple slide animation function as alternative to framework method slideOnObject.
+     * 
+     * Uses placeOnElement method, thus includes all it's features, plus adaptive scaling for target containers that have a different scale value than origin.
+    */
     public slideOnElement(element: HTMLElement, target: HTMLElement, duration: number, delay: number = 0, surface?: HTMLElement, position?: Vec2, toScale: number = 1, center: boolean = true) {
         
         surface = surface || $(this.defaultSlidingSurface);
@@ -336,6 +401,23 @@ class Pasboilerplate extends GameGui {
         });
     }
     
+    /**
+     * Custom made configuranble animation function that adds upon the features of the simpler slideOnElement method.
+     * 
+     * Options: (see SlideAnimationConfig interface for properties types)
+     * - duration 
+     * - delay
+     * - pos
+     * - append
+     * - beforeSibling
+     * - phantomIn
+     * - phantomOut
+     * - slideSurface 
+     * - className
+     * - adaptScale
+     * 
+     * Notes: phantoms are used to gradually take/free up the space occupied by the element in the container, appends element by default in the end
+     */
     public slideElementAnim(element: HTMLElement, target: HTMLElement, options?: SlideAnimationConfig) {
         let config = Object.assign(this.defaultSlideAnimation, options);
 
@@ -346,7 +428,7 @@ class Pasboilerplate extends GameGui {
                 break;
             case 'parent': surface = element.parentElement;
                 break;
-            case 'common_ancestor': // TODO
+            case 'common_ancestor': surface = getCommonAncestor(element,target);
                 break;
             default: surface = $(config.slideSurface);
                 break;
@@ -491,9 +573,7 @@ class Pasboilerplate extends GameGui {
 
     //#endregion
 
-    /////////////////////////
     /// -- GAME STATES -- ///
-    /////////////////////////
     //#region
     
     public onEnteringState(stateName: string, args: any) {
@@ -527,45 +607,35 @@ class Pasboilerplate extends GameGui {
 
     //#endregion
 
-    //////////////////////////
     /// -- GAME UTILITY -- ///
-    //////////////////////////
     //#region
 
 
 
     //#endregion
 
-    /////////////////////////////
     /// -- ACTION HANDLERS -- ///
-    /////////////////////////////
     //#region
 
 
 
     //#endregion
     
-    ///////////////////////////
     /// -- NOTIFICATIONS -- ///
-    ///////////////////////////
     // #region
 
     setupNotifications() {
         console.log( 'notifications subscriptions setup' );
-        
-        // TODO: here, associate your game notifications with local methods
-        
-        // Example 1: standard notification handling
-        //dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-        
-        // Example 2: standard notification handling + tell the user interface to wait
-        //            during 3 seconds after calling the method in order to let the players
-        //            see what is happening in the game.
-        // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-        // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
 
-        dojo.subscribe('dump', this, "notif_dump");
-        dojo.subscribe('log', this, "notif_log");
+        let notifs: any = [
+            ['log',0],
+            ['dump',0],
+        ];
+
+        notifs.forEach((notif) => {
+            dojo.subscribe(notif[0], this, `notif_${notif[0]}`);
+            if (notif[1] > 0) this.notifqueue.setSynchronous(notif[0], notif[1]);
+        });
     }
 
     notif_log(notif: Notif) {

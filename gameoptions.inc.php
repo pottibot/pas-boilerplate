@@ -76,6 +76,16 @@ $game_options = [
 
 // PREFERENCES
 $game_preferences = [
+
+    PREF_CONFIRM => [
+        'name' => clienttranslate('Confirm action'),
+        'values' => [
+            1 => ['name' => clienttranslate('None')],
+            2 => ['name' => clienttranslate('Timed')],
+            3 => ['name' => clienttranslate('Active')],
+        ],
+        'default' => 2
+    ],
     
     PREF_1 => [
         'name' => clienttranslate('Toggle preference'),
