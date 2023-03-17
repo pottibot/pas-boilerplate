@@ -3,12 +3,11 @@
 namespace Gamename;
 
 use \pasboilerplate;
-use \Gamename\Managers\Players;
+use \Gamename\Managers\BasePlayersManager;
 
 class Game {
 
     // SETUP
-    
     public static function setup($players) {
     }
 
@@ -55,11 +54,11 @@ class Game {
     }
 
     public static function getNext() {
-        return Players::getNext();
+        return BasePlayersManager::getNext();
     }
 
     public static function getPrev() {
-        return Players::getPrev();
+        return BasePlayersManager::getPrev();
     }
 
     public static function activatePlayer($pid) {

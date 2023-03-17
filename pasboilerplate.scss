@@ -1,1 +1,34 @@
 @use 'modules/css/preferences_panel';
+
+.testobj {
+    width: 40px;
+    height: 40px;
+    background-color: red;
+
+    border: solid black 2px;
+}
+
+.testcont {
+    padding: 10px;
+
+    position: absolute;
+
+    border: solid black 2px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#b {
+    background-color: blueviolet;
+
+    transform: scale(0.5);
+}
+
+#c {
+    background-color: greenyellow;
+
+    left: 150px;
+    top: 150px;
+}

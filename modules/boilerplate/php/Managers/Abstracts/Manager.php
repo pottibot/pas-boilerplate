@@ -11,6 +11,8 @@ abstract class Manager {
     protected static $entityTable = null;
     protected static $entityPrimary = null;
 
+    protected static $entities_staticData = null;
+
     abstract protected static function setupNewGame($players, $options);
 
     public static function getUiData() {

@@ -133,6 +133,11 @@ declare class GameGui {
     uid: string;
 } */
 
+// declare only subscribe method. only method used from dojo framework (and currently necessary to listen to server notification)
+interface Dojo {
+	subscribe: (notifIdentifier: string, gameInstance: GameGui, handlerIdentifier: string) => void;
+}
+
 interface PreferenceValue {
     name: string;
 }
@@ -145,14 +150,48 @@ interface Preference {
     default: number;
 }
 
-// declare only subscribe method. only method used from dojo framework (and currently necessary to listen to server notification)
-interface Dojo {
-    subscribe: (notifIdentifier: string, gameInstance: GameGui, handlerIdentifier: string) => void;
+interface Size {
+	width: number;
+	height: number;
 }
 
+interface Vec2 {
+	x: number;
+	y: number;
+}
+
+interface SlideAnimationConfig {
+	duration: number,
+	delay: number,
+	pos: Vec2,
+	append: boolean,
+	beforeSibling: string,
+	phantomIn: boolean,
+	phantomOut: boolean,
+	slideSurface: string,
+	className: string,
+	adaptScale: boolean
+}
+
+interface TimedConfirmConfiguration {
+	selectedElement: HTMLElement,
+	selectedClass: string
+}
+
+
+/* 
+// add if necessary
+interface Vec3 {
+	x: number;
+	y: number;
+	z: number;
+} */
+
+
+// WIP
 type Gamestate = any; // TODO
 
-interface Player {
+interface PlayerData {
     beginner: boolean;
     color: string;
     color_back: any | null;
