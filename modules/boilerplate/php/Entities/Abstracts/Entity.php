@@ -1,8 +1,8 @@
 <?php
 
-namespace Gamename\Entities\ABS;
+namespace Boilerplate\Entities\Abstracts;
 
-use Gamename\DB;
+use Boilerplate\DB;
 
 /**
  * Entity is whatever holds information in a game (a meeple and its position, a card and its effect, a tile and its state, ...)

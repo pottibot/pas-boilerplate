@@ -1,9 +1,9 @@
 <?php
 
-namespace Gamename\Managers\ABS;
+namespace Boilerplate\Managers\Abstracts;
 
-use Gamename\DB;
-use Gamename\Entities\Player;
+use Boilerplate\DB;
+use Boilerplate\Entities\Abstracts\Entity;
 
 abstract class Manager {
 

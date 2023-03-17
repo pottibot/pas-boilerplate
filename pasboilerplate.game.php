@@ -25,33 +25,20 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 #region
 
 // require base modules
-require_once('modules/php/DB.php');
-require_once('modules/php/Game.php');
+require_once('modules/boilerplate/php/DB.php');
+require_once('modules/boilerplate/php/Game.php');
 
 use Gamename\Game;
 use Gamename\DB;
 
 // require entity modules
-require_once('modules/php/Entities/Abstracts/Entity.php');
-
 require_once('modules/php/Entities/Player.php');
 use Gamename\Entities\Player;
 
-
 // require manager modules
-require_once('modules/php/Managers/Abstracts/Manager.php');
-
 require_once('modules/php/Managers/Players.php');
-use Gamename\Managers\Players;
+use Gamename\Managers\PlayersManager;
 
-
-// test modules
-require_once('modules/php/Entities/PlayerX.php');
-require_once('modules/php/Managers/PlayersX.php');
-
-use Gamename\Entities\PlayerX;
-use Gamename\Managers\PlayersX;
-//
 
 #endregion
 /////////////////////////////////////
@@ -92,7 +79,7 @@ class pasboilerplate extends Table {
 
     protected function setupNewGame($players, $options = []) {
 
-        Players::setupNewGame($players, $options);
+        PlayersManager::setupNewGame($players, $options);
 
         $this->activeNextPlayer();
     }
@@ -101,11 +88,11 @@ class pasboilerplate extends Table {
         $data = [];
     
         // return only informations visible by this current player (client sending page load request to server)
-        $currPlayer = self::getCurrentPlayerId();
+        //$currPlayer = self::getCurrentPlayerId();
         
         $sql = "SELECT player_id id, player_score score FROM player ";
         
-        $data['players'] = Players::getUiData();
+        $data['players'] = PlayersManager::getUiData();
   
         return $data;
     }

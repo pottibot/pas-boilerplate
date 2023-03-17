@@ -1,16 +1,18 @@
 <?php
+namespace Boilerplate\Managers;
 
-namespace Gamename\Managers;
+require_once('modules/php/Managers/Abstracts/Manager.php');
 
-use Gamename\Game;
-use Gamename\DB;
 
-use Gamename\Entities\BasePlayer;
-use Gamename\Managers\ABS\Manager;
+use Boilerplate\Game;
+use Boilerplate\DB;
+
+use Boilerplate\Entities\BasePlayer;
+use Boilerplate\Managers\Abstracts\Manager;
 
 class BasePlayersManager extends Manager {
 
-    protected static $entityClass = "Gamename\Entities\BasePlayer";
+    protected static $entityClass = "Boilerplate\Entities\BasePlayer";
     protected static $entityTable = 'player';
     protected static $entityPrimary = 'player_id';
 

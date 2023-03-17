@@ -1,9 +1,8 @@
 <?php
+namespace Boilerplate\Entities;
 
-namespace Gamename\Entities;
-
-use Exception;
-use Gamename\Entities\ABS\Entity;
+require_once('modules/boilerplate/php/Entities/Abstracts/Entity.php');
+use Boilerplate\Entities\Abstracts\Entity;
 
 /**
  * class used to represent players as object. this one mirrors the base db player object for any game.
@@ -49,7 +48,7 @@ class BasePlayer extends Entity {
             case 'f07f16': return ($translation)? clienttranslate("orange") : "orange"; break;
             case 'bdd002': return ($translation)? clienttranslate("khaki green") : "khaki green"; break;
             case '7b7b7b': return ($translation)? clienttranslate("gray") : "gray"; break;
-            default: throw new Exception("invalid color");
+            default: throw new \Exception("invalid color");
         }
     }
 }

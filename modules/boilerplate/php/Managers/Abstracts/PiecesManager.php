@@ -1,15 +1,15 @@
 <?php
 
-namespace Gamename\Managers\ABS;
+namespace Boilerplate\Managers\Abstracts;
 
-use Gamename\Game;
-use Gamename\DB;
+use Boilerplate\Game;
+use Boilerplate\DB;
 
-use Gamename\Entities\ABS\Piece;
+use Boilerplate\Entities\Abstracts\Piece;
 
-abstract class Pieces extends Manager {
+abstract class PiecesManager extends Manager {
 
-    protected static $entityClass = "Gamename\Entities\ABS\Piece";
+    protected static $entityClass = "Boilerplate\Entities\Abstracts\Piece";
     protected static $entityTable = 'piece';
     protected static $entityPrimary = 'piece_id';
 
@@ -35,7 +35,8 @@ abstract class Pieces extends Manager {
     /////////////////////////////////////////////////////
     //// GET MANY ///////////////////////////////////////
     
-    public static function getOf($type,$value) {
+    //???
+    /* public static function getOf($type,$value) {
         $primary = static::$entityPrimary;
         $table = static::$entityTable;
 
@@ -53,7 +54,7 @@ abstract class Pieces extends Manager {
                 $ret[] = self::get($id);
             }
         }
-    }
+    } */
 
     public static function getOfType($type) {
         self::getMany('type',$type);
