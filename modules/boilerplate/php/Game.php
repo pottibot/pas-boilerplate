@@ -1,14 +1,13 @@
 <?php
 
-namespace Gamename;
+namespace Boilerplate;
 
 use \pasboilerplate;
-use \Gamename\Managers\Players;
+use \Boilerplate\Managers\BasePlayersManager;
 
 class Game {
 
     // SETUP
-    
     public static function setup($players) {
     }
 
@@ -51,15 +50,15 @@ class Game {
     }
 
     public static function getCurrent() {
-        return self::get()->getCurrentPlayerId();
+        return self::get()->getCurrent(); // need to be exposed in gamename class
     }
 
     public static function getNext() {
-        return Players::getNext();
+        return BasePlayersManager::getNext();
     }
 
     public static function getPrev() {
-        return Players::getPrev();
+        return BasePlayersManager::getPrev();
     }
 
     public static function activatePlayer($pid) {

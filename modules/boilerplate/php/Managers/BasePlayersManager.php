@@ -1,16 +1,18 @@
 <?php
+namespace Boilerplate\Managers;
 
-namespace Gamename\Managers;
+require_once('modules/php/Managers/Abstracts/Manager.php');
 
-use Gamename\Game;
-use Gamename\DB;
 
-use Gamename\Entities\Player;
-use Gamename\Managers\ABS\Manager;
+use Boilerplate\Game;
+use Boilerplate\DB;
 
-class Players extends Manager {
+use Boilerplate\Entities\BasePlayer;
+use Boilerplate\Managers\Abstracts\Manager;
 
-    protected static $entityClass = "Gamename\Entities\Player";
+class BasePlayersManager extends Manager {
+
+    protected static $entityClass = "Boilerplate\Entities\BasePlayer";
     protected static $entityTable = 'player';
     protected static $entityPrimary = 'player_id';
 
@@ -37,7 +39,7 @@ class Players extends Manager {
             $avatar = addslashes($player['player_avatar']);
             $values[] = "('$player_id','$color','$canal','$name','$avatar')";
         }
-        $sql .= implode( $values, ',' );
+        $sql .= implode(',',$values);
         DB::query( $sql );
 
         Game::get()->reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
@@ -58,7 +60,7 @@ class Players extends Manager {
 
     // color
     public static function getByColor($c) {
-        return self::get(self::getIdBy('color',$p));
+        return self::get(self::getIdBy('color',$c));
     }
 
     /////////////////////////////////////////////////////
@@ -102,43 +104,5 @@ class Players extends Manager {
     // get player before active in turn order
     public static function getPrev() {
         return self::getBeforePlayer(self::getActive());
-    }
-
-    /////////////////////////////////////////////////////
-    //// UTILITY ////////////////////////////////////////
-
-    static public function getColorText($colorValue, $translation = false) {
-        if ($translation) {
-            switch ($colorValue) {
-                case 'ff0000': return clienttranslate("red"); break;
-                case '008000': return clienttranslate("green"); break;
-                case '0000ff': return clienttranslate("blue"); break;
-                case 'ffa500': return clienttranslate("yellow"); break;
-                case '000000': return clienttranslate("black"); break;
-                case 'ffffff': return clienttranslate("white"); break;
-                case 'e94190': return clienttranslate("pink"); break;
-                case '982fff': return clienttranslate("purple"); break;
-                case '72c3b1': return clienttranslate("cyan"); break;
-                case 'f07f16': return clienttranslate("orange"); break;
-                case 'bdd002': return clienttranslate("khaki green"); break;
-                case '7b7b7b': return clienttranslate("gray"); break;
-            } 
-        } else{
-            switch ($colorValue) {
-                case 'ff0000': return "red"; break;
-                case '008000': return "green"; break;
-                case '0000ff': return "blue"; break;
-                case 'ffa500': return "yellow"; break;
-                case '000000': return "black"; break;
-                case 'ffffff': return "white"; break;
-                case 'e94190': return "pink"; break;
-                case '982fff': return "purple"; break;
-                case '72c3b1': return "cyan"; break;
-                case 'f07f16': return "orange"; break;
-                case 'bdd002': return "khaki green"; break;
-                case '7b7b7b': return "gray"; break;
-            } 
-        }
-        
     }
 }

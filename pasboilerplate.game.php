@@ -24,34 +24,57 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 /////////////////////////////////////
 #region
 
-// require base modules
-require_once('modules/php/DB.php');
-require_once('modules/php/Game.php');
+/* // require base modules
+require_once('modules/boilerplate/php/DB.php');
+require_once('modules/boilerplate/php/Game.php');
 
 use Gamename\Game;
 use Gamename\DB;
 
 // require entity modules
-require_once('modules/php/Entities/Abstracts/Entity.php');
-
 require_once('modules/php/Entities/Player.php');
 use Gamename\Entities\Player;
 
-
 // require manager modules
-require_once('modules/php/Managers/Abstracts/Manager.php');
-
 require_once('modules/php/Managers/Players.php');
-use Gamename\Managers\Players;
+use Gamename\Managers\PlayersManager;
+ */
 
+/*
+ * AUTOLOADER
+ * Description: This code registers a function with the spl_autoload stack.
+ * This function will be called when a class is not found. By default, the
+ * function will be called with the name of the class, and the function
+ * should include the appropriate file.
+ */
+spl_autoload_register(function ($class) {
+    // project-specific namespace prefix
+    $prefix = 'Gamename\\';
 
-// test modules
-require_once('modules/php/Entities/PlayerX.php');
-require_once('modules/php/Managers/PlayersX.php');
+    // base directory for the namespace prefix
+    $base_dir = __DIR__ . '/modules/php/';
 
-use Gamename\Entities\PlayerX;
-use Gamename\Managers\PlayersX;
-//
+    // does the class use the namespace prefix?
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        // no, move to the next registered autoloader
+        return;
+    }
+
+    // get the relative class name
+    $relative_class = substr($class, $len);
+
+    // replace the namespace prefix with the base directory,
+    // replace namespace separators with directory separators
+    // in the relative class name, append with .php
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+    // if the file exists, require it
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
 
 #endregion
 /////////////////////////////////////
@@ -92,7 +115,7 @@ class pasboilerplate extends Table {
 
     protected function setupNewGame($players, $options = []) {
 
-        Players::setupNewGame($players, $options);
+        PlayersManager::setupNewGame($players, $options);
 
         $this->activeNextPlayer();
     }
@@ -101,11 +124,11 @@ class pasboilerplate extends Table {
         $data = [];
     
         // return only informations visible by this current player (client sending page load request to server)
-        $currPlayer = self::getCurrentPlayerId();
+        //$currPlayer = self::getCurrentPlayerId();
         
         $sql = "SELECT player_id id, player_score score FROM player ";
         
-        $data['players'] = Players::getUiData();
+        $data['players'] = PlayersManager::getUiData();
   
         return $data;
     }
@@ -126,6 +149,10 @@ class pasboilerplate extends Table {
     function test() {
         Game::clog("HELLO");
         Game::cdump("HELLO");
+    }
+
+    function getCurrent() {
+        self::getCurrentPlayerId();
     }
 
     #endregion

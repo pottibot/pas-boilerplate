@@ -1,6 +1,6 @@
 <?php
 
-namespace Gamename;
+namespace Boilerplate;
 
 class DB extends \APP_DbObject {
 

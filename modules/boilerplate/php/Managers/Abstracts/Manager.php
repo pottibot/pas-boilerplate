@@ -1,15 +1,17 @@
 <?php
 
-namespace Gamename\Managers\ABS;
+namespace Boilerplate\Managers\Abstracts;
 
-use Gamename\DB;
-use Gamename\Entities\Player;
+use Boilerplate\DB;
+use Boilerplate\Entities\Abstracts\Entity;
 
 abstract class Manager {
 
     protected static $entityClass = null;
     protected static $entityTable = null;
     protected static $entityPrimary = null;
+
+    protected static $entities_staticData = null;
 
     abstract protected static function setupNewGame($players, $options);
 
