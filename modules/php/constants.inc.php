@@ -1,0 +1,13 @@
+<?php
+
+// STATE CONSTANTS
+
+// GAME VARIANTS
+const OPTION_1 = 100;
+
+// PREFERENCES
+const PREF_CONFIRM = 101;
+const PREF_1 = 101;
+const PREF_2 = 102;
+
+// STATISTICS

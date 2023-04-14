@@ -18,12 +18,12 @@ abstract class Entity extends \APP_DbObject implements \JsonSerializable {
     /**
      * the exact name of database table the entity references on the DB to store and retrieve its data
      */
-    protected ?string $table = null;
+    protected $table = null;
 
     /**
      * the exact field name of the primary key of the referenced table
      */
-    protected ?string $primary = null;
+    protected $primary = null;
 
     /** 
      * array mapping the object attributes to the the database table fields.
@@ -45,7 +45,7 @@ abstract class Entity extends \APP_DbObject implements \JsonSerializable {
     /**
      * when true, every new value assignment to an attribute of this class triggers an UPDATE query to the server to store the object data
      */
-    protected static bool $autoSave = true;
+    protected static $autoSave = true;
 
     /////////////////////////////////////////////////////
     //// CONSTRUCTOR ////////////////////////////////////
@@ -73,7 +73,7 @@ abstract class Entity extends \APP_DbObject implements \JsonSerializable {
 
         $getter = "get".ucfirst($key); // fetch getter method
 
-        if (is_null($this->key)) { // if attribute is null
+        if (is_null($this->$key)) { // if attribute is null
             $this->$key = self::$getter(); // call getter and store its value
         }
 
@@ -152,7 +152,7 @@ abstract class Entity extends \APP_DbObject implements \JsonSerializable {
      */
     public function jsonSerialize() {
         $data = [];
-        foreach (static::getAttributes() as $attribute) {
+        foreach (static::getAttributes() as $attribute => $field) {
             $data[$attribute] = $this->$attribute;
         }
 

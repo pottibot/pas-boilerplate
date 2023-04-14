@@ -1,9 +1,6 @@
 <?php
 namespace Boilerplate\Managers;
 
-require_once('modules/php/Managers/Abstracts/Manager.php');
-
-
 use Boilerplate\Game;
 use Boilerplate\DB;
 

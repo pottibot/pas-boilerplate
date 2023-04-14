@@ -3,7 +3,7 @@
 namespace Boilerplate;
 
 use \pasboilerplate;
-use \Boilerplate\Managers\BasePlayersManager;
+use Managers\BasePlayersManager;
 
 class Game {
 

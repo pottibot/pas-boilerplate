@@ -1,7 +1,6 @@
 <?php
 namespace Boilerplate\Entities;
 
-require_once('modules/boilerplate/php/Entities/Abstracts/Entity.php');
 use Boilerplate\Entities\Abstracts\Entity;
 
 /**

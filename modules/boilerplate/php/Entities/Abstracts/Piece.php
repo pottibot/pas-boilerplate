@@ -1,8 +1,6 @@
 <?php
 namespace Boilerplate\Entities\Abstracts;
 
-require_once('modules/boilerplate/php/Entities/Abstracts/Entity.php');
-
 abstract class Piece extends Entity {
 
     protected $table; // = 'piece';

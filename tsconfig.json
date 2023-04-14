@@ -6,9 +6,10 @@
       "lib": ["dom", "esnext"],  
       "sourceMap": false,
       "outFile": "pasboilerplate.js",
-      "typeRoots": ["modules/js/types", "./types", "./node_modules/@types"]
+      "typeRoots": ["modules/boilerplate/js/types", "modules/js/types", "./types", "./node_modules/@types"]
     },
     "include": [
+        "modules/boilerplate/js/**/*.ts",
         "modules/js/**/*.ts",
         "pasboilerplate.ts",
     ]

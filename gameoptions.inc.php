@@ -10,7 +10,7 @@
  * -----
  */
 
-require_once 'modules/php/constants.inc.php';
+require_once ('modules/php/constants.inc.php');
 
 // VARIANTS
 $game_options = [

@@ -9,6 +9,27 @@ define([
 ], function (dojo, declare) {
     return declare("bgagame.pasboilerplate", ebg.core.gamegui, new Pasboilerplate());
 });
+var Player = /** @class */ (function () {
+    function Player(playerData, game) {
+        this.game = game;
+        this.beginner = playerData.beginner;
+        this.color = playerData.color;
+        this.color_back = playerData.color_back;
+        this.eliminated = playerData.eliminated;
+        this.id = playerData.id;
+        this.is_ai = playerData.is_ai;
+        this.name = playerData.name;
+        this.score = playerData.score;
+        this.zombie = playerData.zombie;
+    }
+    // TODO
+    Player.prototype.incScore = function (delta) {
+    };
+    // TODO
+    Player.prototype.setScore = function (delta) {
+    };
+    return Player;
+}());
 ////////////////////////////////////////
 // HELPERS THAT EXTENDS JS CAPABILITIES
 /**
@@ -190,9 +211,7 @@ var isDebug = window.location.host == 'studio.boardgamearena.com' || window.loca
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var Pasboilerplate = /** @class */ (function (_super) {
     __extends(Pasboilerplate, _super);
-    ///////////////////
     /// -- SETUP -- ///
-    ///////////////////
     //#region
     function Pasboilerplate() {
         var _this = _super.call(this) || this;
@@ -231,22 +250,69 @@ var Pasboilerplate = /** @class */ (function (_super) {
         console.log("Ending game setup");
     };
     //#endregion
-    //////////////////////////
     /// -- MISC UTILITY -- ///
-    //////////////////////////
     //#region
-    Pasboilerplate.prototype.takeAction = function (action, data) {
+    Pasboilerplate.prototype.takeAction = function (action, data, confirm, confirmConfig) {
+        var _this = this;
+        if (confirm === void 0) { confirm = true; }
         if (!gameui.checkAction(action))
             return;
-        data = data || {};
-        data.lock = true;
-        return new Promise(function (resolve, reject) {
-            gameui.ajaxcall("/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html", data, //
-            gameui, function (data) { return resolve(data); }, function (isError) {
-                if (isError)
-                    reject(data);
+        if (confirm) {
+            var secs_1;
+            switch (this.prefs[100].value) {
+                case 1:
+                    secs_1 = 0;
+                    break; // none
+                case 2:
+                    secs_1 = 5;
+                    break; // timed
+                case 3:
+                    secs_1 = 300;
+                    break; // active (infinite time -> 5 minutes)
+            }
+            document.querySelectorAll(".".concat(confirmConfig.selectedClass)).forEach(function (el) {
+                el.classList.remove(confirmConfig.selectedClass);
             });
-        });
+            if (secs_1 == 0) {
+                this.takeAction(action, data, false);
+            }
+            confirmConfig.selectedElement.classList.add(confirmConfig.selectedClass);
+            if ($('timedConfirm_button'))
+                $('timedConfirm_button').remove();
+            if ($('reset_button'))
+                $('reset_button').remove();
+            clearInterval(this.timedConfirmInterval);
+            this.addActionButton('timedConfirm_button', _('Confirm') + ((secs_1 <= 10) ? " (".concat(secs_1, ")") : ''), function (evt) {
+                clearInterval(_this.timedConfirmInterval);
+                confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+            });
+            this.addActionButton('reset_button', _('Reset'), function (evt) {
+                confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+                clearInterval(_this.timedConfirmInterval);
+                $('timedConfirm_button').remove();
+                $('reset_button').remove();
+            }, null, false, 'gray');
+            this.timedConfirmInterval = setInterval(function () {
+                secs_1--;
+                $('timedConfirm_button').innerHTML = "".concat(_('Confirm')) + ((secs_1 <= 10) ? " (".concat(secs_1, ")") : '');
+                if (secs_1 == 0) {
+                    clearInterval(_this.timedConfirmInterval);
+                    confirmConfig.selectedElement.classList.remove(confirmConfig.selectedClass);
+                    _this.takeAction(action, data, false);
+                }
+            }, 1000);
+        }
+        else {
+            data = data || {};
+            data.lock = true;
+            return new Promise(function (resolve, reject) {
+                gameui.ajaxcall("/" + gameui.game_name + "/" + gameui.game_name + "/" + action + ".html", data, //
+                gameui, function (data) { return resolve(data); }, function (isError) {
+                    if (isError)
+                        reject(data);
+                });
+            });
+        }
     };
     // -- BGA framework overrides -- //
     /* @Override */
@@ -600,9 +666,7 @@ var Pasboilerplate = /** @class */ (function (_super) {
         });
     };
     //#endregion
-    /////////////////////////
     /// -- GAME STATES -- ///
-    /////////////////////////
     //#region
     Pasboilerplate.prototype.onEnteringState = function (stateName, args) {
         console.log('Entering state: ' + stateName);
@@ -626,19 +690,13 @@ var Pasboilerplate = /** @class */ (function (_super) {
         }
     };
     //#endregion
-    //////////////////////////
     /// -- GAME UTILITY -- ///
-    //////////////////////////
     //#region
     //#endregion
-    /////////////////////////////
     /// -- ACTION HANDLERS -- ///
-    /////////////////////////////
     //#region
     //#endregion
-    ///////////////////////////
     /// -- NOTIFICATIONS -- ///
-    ///////////////////////////
     // #region
     Pasboilerplate.prototype.setupNotifications = function () {
         var _this = this;
